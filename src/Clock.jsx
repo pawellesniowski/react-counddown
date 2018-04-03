@@ -14,20 +14,44 @@ export class Clock extends Component {
 
     }
 
-    getTimeUntil(deadline) {
-        const time = Date.parse(deadline) - Date.parse(new Date());
-        console.log(time);
+    componentWillMount() {
+        this.getTimeUntil(this.props.deadline);
     }
 
+    componentDidMount() {
+        setInterval(() => this.getTimeUntil(this.props.deadline), 1000);
+    }
+
+    getTimeUntil(deadline) {
+        const time = Date.parse(deadline) - Date.parse(new Date());
+
+        const seconds = ((time/1000)%60);
+        const minutes = Math.floor((time/1000/60)%60);
+        const hours = Math.floor((time/1000/60/60)%24);
+        const days = Math.floor((time/1000/60/60/24));
+
+        this.setState({
+            days,
+            hours,
+            minutes,
+            seconds
+        })
+    }
+
+    pretty(number) {
+        return number > 9 ? number : '0' + number;
+    }
+
+
+
     render(){
-        this.getTimeUntil(this.props.deadline);
         return(
             <div>
 
-                <div className="Clock-days">{this.state.days} days</div>
-                <div className="Clock-hours">{this.state.hours} hours</div>
-                <div className="Clock-minutes">{this.state.minutes} minutes</div>
-                <div className="Clock-seconds">{this.state.seconds} seconds</div>
+                <div className="Clock-days">{this.pretty(this.state.days)} days</div>
+                <div className="Clock-hours">{this.pretty(this.state.hours)} hours</div>
+                <div className="Clock-minutes">{this.pretty(this.state.minutes)} minutes</div>
+                <div className="Clock-seconds">{this.pretty(this.state.seconds)} seconds</div>
             </div>
 
         );
